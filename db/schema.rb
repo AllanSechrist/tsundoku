@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_28_030924) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_28_035559) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,6 +56,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_030924) do
     t.index ["user_id"], name: "index_members_on_user_id"
   end
 
+  create_table "owned_books", force: :cascade do |t|
+    t.string "rating"
+    t.text "review"
+    t.bigint "book_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "shelf_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_owned_books_on_book_id"
+    t.index ["shelf_id"], name: "index_owned_books_on_shelf_id"
+    t.index ["user_id"], name: "index_owned_books_on_user_id"
+  end
+
   create_table "profiles", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.text "bio"
@@ -68,6 +81,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_030924) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "shelves", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.bigint "profile_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_id"], name: "index_shelves_on_profile_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -90,5 +112,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_030924) do
   add_foreign_key "books", "publishers"
   add_foreign_key "members", "bookclubs"
   add_foreign_key "members", "users"
+  add_foreign_key "owned_books", "books"
+  add_foreign_key "owned_books", "shelves"
+  add_foreign_key "owned_books", "users"
   add_foreign_key "profiles", "users"
+  add_foreign_key "shelves", "profiles"
 end
