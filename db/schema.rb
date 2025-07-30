@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_28_035559) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_30_113258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,11 +61,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_035559) do
     t.text "review"
     t.bigint "book_id", null: false
     t.bigint "user_id", null: false
-    t.bigint "shelf_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["book_id"], name: "index_owned_books_on_book_id"
-    t.index ["shelf_id"], name: "index_owned_books_on_shelf_id"
     t.index ["user_id"], name: "index_owned_books_on_user_id"
   end
 
@@ -81,6 +79,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_035559) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "shelf_books", force: :cascade do |t|
+    t.bigint "owned_book_id", null: false
+    t.bigint "shelf_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owned_book_id"], name: "index_shelf_books_on_owned_book_id"
+    t.index ["shelf_id"], name: "index_shelf_books_on_shelf_id"
   end
 
   create_table "shelves", force: :cascade do |t|
@@ -113,8 +120,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_28_035559) do
   add_foreign_key "members", "bookclubs"
   add_foreign_key "members", "users"
   add_foreign_key "owned_books", "books"
-  add_foreign_key "owned_books", "shelves"
   add_foreign_key "owned_books", "users"
   add_foreign_key "profiles", "users"
+  add_foreign_key "shelf_books", "owned_books"
+  add_foreign_key "shelf_books", "shelves"
   add_foreign_key "shelves", "profiles"
 end
