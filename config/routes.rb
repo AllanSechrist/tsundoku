@@ -11,6 +11,6 @@ Rails.application.routes.draw do
   }
 
   resources :profiles do
-    resources :shelves, only: [:index]
+    resources :shelves, only: [:index, :show, :create, :destroy, :update]
   end
 end
