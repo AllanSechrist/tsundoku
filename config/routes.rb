@@ -9,4 +9,8 @@ Rails.application.routes.draw do
     sessions: 'users/sessions',
     registrations: 'users/registrations'
   }
+
+  resources :profiles do
+    resources :shelves, only: [:index]
+  end
 end
