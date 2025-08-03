@@ -13,4 +13,6 @@ Rails.application.routes.draw do
   resources :profiles do
     resources :shelves, only: [:index, :show, :create, :destroy, :update]
   end
+
+  resources :owned_books, only: [:index, :show, :create, :update, :destroy]
 end
