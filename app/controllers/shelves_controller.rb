@@ -36,6 +36,32 @@ class ShelvesController < ApplicationController
     end
   end
 
+  def update
+    if @profile
+      shelf = @profile.shelves.find_by(id: params[:id])
+      if shelf.update(shelf_params)
+        render json: ShelfSerializer.new(shelf, include: [:shelf_books, :owned_books]).serializable_hash, status: :ok
+      else
+        render json: { errors: shelf.errors.full_messages }, status: :unprocessable_entity
+      end
+    else
+      render json: { messages: "Profile not found" }, status: :not_found
+    end
+  end
+
+  def destroy
+    if @profile
+      shelf = @profile.shelves.find_by(id: params[:id])
+      if shelf.destroy
+        render json: { message: "Shelf was successfully deleted." }, status: :ok
+      else
+        render json: { errors: shelf.errors.full_messages }, status: :unprocessable_entity
+      end
+    else
+      render json: { messages: "Profile not found" }, status: :not_found
+    end
+  end
+
   private
 
   def get_profile
