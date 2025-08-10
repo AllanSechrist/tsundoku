@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_30_113258) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_10_224442) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,6 +45,24 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_30_113258) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "invites", force: :cascade do |t|
+    t.bigint "bookclub_id", null: false
+    t.bigint "user_id", null: false
+    t.string "recipient_email"
+    t.integer "status"
+    t.string "token"
+    t.datetime "expires_at"
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
+    t.datetime "responded_at"
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bookclub_id"], name: "index_invites_on_bookclub_id"
+    t.index ["token"], name: "index_invites_on_token", unique: true
+    t.index ["user_id"], name: "index_invites_on_user_id"
   end
 
   create_table "members", force: :cascade do |t|
@@ -117,6 +135,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_30_113258) do
   add_foreign_key "books", "authors"
   add_foreign_key "books", "genres"
   add_foreign_key "books", "publishers"
+  add_foreign_key "invites", "bookclubs"
+  add_foreign_key "invites", "users"
   add_foreign_key "members", "bookclubs"
   add_foreign_key "members", "users"
   add_foreign_key "owned_books", "books"
