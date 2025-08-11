@@ -95,6 +95,15 @@ class SeedDataBase
     end
   end
 
+  def self.create_book_clubs
+    puts "Creating Book Clubs"
+    users = User.all
+    bookclubs = ["Between the Lines", "Chapter & Chatter", "The Plot Thickens", "Bookmarks & Beverages", "Ink & Insight", "The Literary Lantern"]
+    users.each_with_index do |user, index|
+      Bookclub.create!(name: bookclubs[index], description: "Its pretty cool.", creator: user)
+    end
+  end
+
   def self.seed_database
     puts "Start seeding"
     reset_database
@@ -103,6 +112,7 @@ class SeedDataBase
     create_owned_books
     create_shelves
     create_shelf_books
+    create_book_clubs
     puts "Finish seeding"
   end
 end
