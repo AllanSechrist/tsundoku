@@ -18,7 +18,7 @@ class Invite < ApplicationRecord
 
   scope :active, -> { pending.where("expires_at IS NULL OR expires_at > ?", Time.current)}
   scope :for_bookclub, ->(club_id) {where(bookclub_id: club_id)}
-  scope :pending_for ->(user) {
+  scope :pending_for, ->(user) {
     where(status: statuses[:pending]).where("recipient_id = :id OR LOWER(recipient_email) = LOWER(:email)", id: user.id, email: user.email)
   }
 
