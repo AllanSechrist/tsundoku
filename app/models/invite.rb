@@ -14,7 +14,7 @@ class Invite < ApplicationRecord
 
   before_validation :normalize_email
   before_validation :generate_token, on: :create
-  before_validation :set_defalut_expiry, on: :create
+  before_validation :set_default_expiry, on: :create
 
   scope :active, -> { pending.where("expires_at IS NULL OR expires_at > ?", Time.current)}
   scope :for_bookclub, ->(club_id) {where(bookclub_id: club_id)}
