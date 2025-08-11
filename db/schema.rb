@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_10_235105) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_11_020304) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,10 +50,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_10_235105) do
   create_table "invites", force: :cascade do |t|
     t.bigint "bookclub_id", null: false
     t.bigint "sender_id", null: false
-    t.bigint "recipient_id", null: false
+    t.bigint "recipient_id"
     t.string "recipient_email"
-    t.integer "status"
-    t.string "token"
+    t.integer "status", default: 0
+    t.string "token", null: false
     t.datetime "expires_at"
     t.datetime "accepted_at"
     t.datetime "declined_at"
