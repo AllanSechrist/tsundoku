@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_10_224442) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_10_235105) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,7 +49,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_10_224442) do
 
   create_table "invites", force: :cascade do |t|
     t.bigint "bookclub_id", null: false
-    t.bigint "user_id", null: false
+    t.bigint "sender_id", null: false
+    t.bigint "recipient_id", null: false
     t.string "recipient_email"
     t.integer "status"
     t.string "token"
@@ -60,9 +61,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_10_224442) do
     t.text "message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "bookclub_id, lower((recipient_email)::text)", name: "index_invites_unique_pending_by_bookclub_and_email", unique: true, where: "((status = 0) AND (recipient_email IS NOT NULL))"
+    t.index ["bookclub_id", "recipient_id"], name: "index_invites_on_bookclub_id_and_recipient_id", unique: true, where: "((status = 0) AND (recipient_id IS NOT NULL))"
     t.index ["bookclub_id"], name: "index_invites_on_bookclub_id"
+    t.index ["recipient_id"], name: "index_invites_on_recipient_id"
+    t.index ["sender_id"], name: "index_invites_on_sender_id"
     t.index ["token"], name: "index_invites_on_token", unique: true
-    t.index ["user_id"], name: "index_invites_on_user_id"
+    t.check_constraint "recipient_email IS NOT NULL OR recipient_id IS NOT NULL", name: "invites_require_recipient"
   end
 
   create_table "members", force: :cascade do |t|
@@ -136,7 +141,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_10_224442) do
   add_foreign_key "books", "genres"
   add_foreign_key "books", "publishers"
   add_foreign_key "invites", "bookclubs"
-  add_foreign_key "invites", "users"
+  add_foreign_key "invites", "users", column: "recipient_id"
+  add_foreign_key "invites", "users", column: "sender_id"
   add_foreign_key "members", "bookclubs"
   add_foreign_key "members", "users"
   add_foreign_key "owned_books", "books"
