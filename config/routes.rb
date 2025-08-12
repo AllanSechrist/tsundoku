@@ -11,8 +11,20 @@ Rails.application.routes.draw do
   }
 
   resources :profiles do
-    resources :shelves, only: [:index, :show, :create, :destroy, :update]
-    resources :invites, only: [:index, :show, :create, :update, :destroy]
+    resources :shelves, only: [:index, :show, :create, :destroy, :update], shallow: true do
+      resources :shelf_books, only: [:index, :create, :destroy]
+    end
+  end
+
+  resources :bookclubs do
+    resources :invites, only: [:index, :create], shallow: true
+  end
+
+  resources :invites, only: [:show, :update, :destroy] do
+    member do
+      post :accept
+      post :revoke
+    end
   end
 
   resources :owned_books, only: [:index, :show, :create, :update, :destroy]
