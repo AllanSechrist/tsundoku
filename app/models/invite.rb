@@ -1,4 +1,6 @@
 class Invite < ApplicationRecord
+  # holds invites for users to join bookclubs.
+  #
   belongs_to :bookclub
   belongs_to :sender, class_name: "User"
   belongs_to :recipient, class_name: "User", optional: true
@@ -23,6 +25,9 @@ class Invite < ApplicationRecord
   }
 
   def accept!(by_user: nil)
+    # Checks if an invite is still valid and adds the user to the bookclubs members list.
+    # with_lock ensures that the transaction can only happen once if for some reason
+    # the accept method is triggered multiple times.
     with_lock do
       return self if accepted?
       raise "Invite expired" if expired? || (expires_at && expires_at <= Time.current)
@@ -55,6 +60,8 @@ class Invite < ApplicationRecord
   end
 
   def attach_to_user!(user)
+    # If the invite doesn't already have a recipient_id, and the recipient_email matches the user's email,
+    # attach the user to the invite.
     return self if recipient_id.present?
     if recipient_email.present? && recipient_email.casecmp?(user.email)
       update!(recipient_id: user.id)
@@ -66,11 +73,20 @@ class Invite < ApplicationRecord
   private
 
   def normalize_email
+    # Ensures that all emails have the same format, no spaces and sets it to null if empty.
     self.recipient_email = recipient_email.to_s.strip.downcase.presence
   end
 
   def generate_token
+    # Generates a unique token for the invite
+    # The token is used to identify the invite in URLs.
+    # Tokens are unique and will not be reused.
+    # NOTE: It is possible for the following to generate
+    # a non-unique token, however, the math indicates that
+    # the chances of this are so low it would take multiple life times
+    # for it to produce a duplicate.
     self.token ||= SecureRandom.hex(20)
+
   end
 
   def set_default_expiry
@@ -78,6 +94,11 @@ class Invite < ApplicationRecord
   end
 
   def recipient_presence
+    # Validates that an invite has either a recipient_id or a recipient_email.
+    # We want to allow invites to be created without a recipient_id (e.g. if the
+    # recipient is not yet a member of the app) and instead store the recipient's
+    # email address. Later, if/when the recipient signs up, we'll update the
+    # invite with their user_id.
     if recipient_id.blank? && recipient_email.blank?
       errors.add(:base, "Must have either a recipient_id or a recipient_email")
     end

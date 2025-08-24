@@ -6,7 +6,8 @@ class Bookclub < ApplicationRecord
   after_create :add_creator_as_member
 
   def get_members
-    # returns a list of users in a bookclub
+    # returns a list of user emails in a bookclub.
+    # Maybe change to username later?
     members.map { |member| member.user.email }
   end
 

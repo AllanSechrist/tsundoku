@@ -1,5 +1,6 @@
 class InvitesController < ApplicationController
   def index
+    @invites = current_user.invites
 
   end
 
