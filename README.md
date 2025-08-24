@@ -1,6 +1,6 @@
 # README
 
-📚 Bookclub Invites API
+📚 Tsundoku API
 
 This is a Ruby on Rails API that powers a Bookclub application. The API manages bookclubs, users, and invites, and is designed to be consumed by a React frontend (currently under development).
 
