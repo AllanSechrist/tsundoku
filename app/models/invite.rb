@@ -18,6 +18,10 @@ class Invite < ApplicationRecord
   before_validation :generate_token, on: :create
   before_validation :set_default_expiry, on: :create
 
+
+  # Pre defines search conditions for easier use
+  # i.e. Invite.active will return active invites.
+  # They can also be chained together: Invite.active.for_bookclub(bookclub_id).pending(current_user)
   scope :active, -> { pending.where("expires_at IS NULL OR expires_at > ?", Time.current)}
   scope :for_bookclub, ->(club_id) {where(bookclub_id: club_id)}
   scope :pending_for, ->(user) {
